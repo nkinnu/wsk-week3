@@ -1,0 +1,64 @@
+### Hae kaikki kissat
+GET http://localhost:3000/api/v1/cats
+
+### Hae kissa ID:n perusteella
+GET http://localhost:3000/api/v1/cats/1
+
+### Lisää uusi kissa
+POST http://localhost:3000/api/v1/cats
+Content-Type: application/json
+
+{
+  "name": "Pörri",
+  "birthdate": "2020-01-01",
+  "weight": 4.5,
+  "owner": "Niko",
+  "image": "https://placecats.com/300/200"
+}
+
+### Päivitä kissa
+PUT http://localhost:3000/api/v1/cats/1
+Content-Type: application/json
+
+{
+  "name": "Pörri",
+  "birthdate": "2020-01-01",
+  "weight": 4.5,
+  "owner": "Niko",
+  "image": "https://placecats.com/300/200"
+}
+
+### Poista kissa
+DELETE http://localhost:3000/api/v1/cats/1
+
+
+### Hae kaikki käyttäjät
+GET http://localhost:3000/api/v1/users
+
+### Hae käyttäjä ID:n perusteella
+GET http://localhost:3000/api/v1/users/1
+
+### Lisää uusi käyttäjä
+POST http://localhost:3000/api/v1/users
+Content-Type: application/json
+
+{
+  "name": "Matti Meikä",
+  "username": "mattimeika",
+  "email": "matti@metropolia.fi",
+  "password": "salasana"
+}
+
+### Päivitä käyttäjä
+PUT http://localhost:3000/api/v1/users/1
+Content-Type: application/json
+
+{
+  "name": "Matti Meikä",
+  "username": "mattimeika",
+  "email": "matti@metropolia.fi",
+  "password": "salasana"
+}
+
+### Poista käyttäjä
+DELETE http://localhost:3000/api/v1/users/1

@@ -1,7 +1,31 @@
-import {cats} from '../models/cat-model.js';
+import {listAllCats, findCatById, addCat} from '../models/cat-model.js';
 
-const getAllCats = (req, res) => {
-  res.json(cats);
-};
+function getAllCats(req, res) {
+  res.json(listAllCats());
+}
 
-export {getAllCats};
+function getCatById(req, res) {
+  const id = Number(req.params.id);
+  const cat = findCatById(id);
+
+  if (!cat) {
+    return res.status(404).json({message: 'Kissaa ei löytynyt'});
+  }
+
+  res.json(cat);
+}
+
+function postCat(req, res) {
+  const id = addCat(req.body);
+  res.status(201).json({cat_id: id});
+}
+
+function putCat(req, res) {
+  res.json({message: 'Cat item updated'});
+}
+
+function deleteCat(req, res) {
+  res.json({message: 'Cat item deleted'});
+}
+
+export {getAllCats, getCatById, postCat, putCat, deleteCat};
