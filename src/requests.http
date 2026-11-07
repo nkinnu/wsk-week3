@@ -73,7 +73,7 @@ Content-Type: application/json
   "name": "Matti Meikä",
   "username": "mattimeika",
   "email": "matti.uusi@metropolia.fi",
-  "password": "salasana"
+  "role": "user"
 }
 
 ### Poista käyttäjä
