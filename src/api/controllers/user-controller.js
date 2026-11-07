@@ -1,12 +1,20 @@
-import {listAllUsers, findUserById, addUser} from '../models/user-model.js';
+import {
+  listAllUsers,
+  findUserById,
+  addUser,
+  modifyUser,
+  removeUser,
+} from '../models/user-model.js';
 
-function getAllUsers(req, res) {
-  res.json(listAllUsers());
+import {listCatsByUserId} from '../models/cat-model.js';
+
+async function getAllUsers(req, res) {
+  const users = await listAllUsers();
+  res.json(users);
 }
 
-function getUserById(req, res) {
-  const id = Number(req.params.id);
-  const user = findUserById(id);
+async function getUserById(req, res) {
+  const user = await findUserById(req.params.id);
 
   if (!user) {
     return res.status(404).json({message: 'Käyttäjää ei löytynyt'});
@@ -15,17 +23,42 @@ function getUserById(req, res) {
   res.json(user);
 }
 
-function postUser(req, res) {
-  const id = addUser(req.body);
-  res.status(201).json({user_id: id});
+async function postUser(req, res) {
+  const result = await addUser(req.body);
+
+  if (result) {
+    res.status(201).json({
+      message: 'Käyttäjä lisätty',
+      result,
+    });
+  } else {
+    res.sendStatus(400);
+  }
 }
 
-function putUser(req, res) {
-  res.json({message: 'User item updated'});
+async function putUser(req, res) {
+  const result = await modifyUser(Number(req.params.id), req.body);
+
+  if (result) {
+    res.json({message: 'Käyttäjän tiedot päivitetty'});
+  } else {
+    res.status(404).json({message: 'Käyttäjää ei löytynyt'});
+  }
 }
 
-function deleteUser(req, res) {
-  res.json({message: 'User item deleted'});
+async function deleteUser(req, res) {
+  const result = await removeUser(Number(req.params.id));
+
+  if (result) {
+    res.json({message: 'Käyttäjä poistettu'});
+  } else {
+    res.status(404).json({message: 'Käyttäjää ei löytynyt'});
+  }
 }
 
-export {getAllUsers, getUserById, postUser, putUser, deleteUser};
+async function getUserCats(req, res) {
+  const cats = await listCatsByUserId(req.params.id);
+  res.json(cats);
+}
+
+export {getAllUsers, getUserById, postUser, putUser, deleteUser, getUserCats};

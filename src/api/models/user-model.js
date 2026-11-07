@@ -1,46 +1,95 @@
-// mock data
-const users = [
-  {
-    user_id: 3609,
-    name: 'John Doe',
-    username: 'johndoe',
-    email: 'john@metropolia.fi',
-    role: 'user',
-    password: 'password',
-  },
+import promisePool from '../../utils/database.js';
 
-  {
-    user_id: 3610,
-    name: 'Jane Smith',
-    username: 'janesmith',
-    email: 'jane@metropolia.fi',
-    role: 'user',
-    password: 'password123',
-  },
-];
+async function listAllUsers() {
+  const [rows] = await promisePool.query(
+    'SELECT user_id, name, username, email, role FROM wsk_users'
+  );
 
-function listAllUsers() {
-  return users;
+  return rows;
 }
 
-function findUserById(id) {
-  return users.find((item) => item.user_id === id);
+async function findUserById(id) {
+  const [rows] = await promisePool.execute(
+    'SELECT user_id, name, username, email, role FROM wsk_users WHERE user_id = ?',
+    [id]
+  );
+
+  if (rows.length === 0) {
+    return false;
+  }
+
+  return rows[0];
 }
 
-function addUser(user) {
-  const {name, username, email, role, password} = user;
-  const newId = users[users.length - 1].user_id + 1;
+async function addUser(user) {
+  const {name, username, email, password} = user;
 
-  users.push({
-    user_id: newId,
-    name,
-    username,
-    email,
-    role,
-    password,
-  });
+  const sql =
+    'INSERT INTO wsk_users (name, username, email, password, role) VALUES (?, ?, ?, ?, ?)';
 
-  return newId;
+  const params = [name, username, email, password, 'user'];
+
+  const [result] = await promisePool.execute(sql, params);
+
+  if (result.affectedRows === 0) {
+    return false;
+  }
+
+  return {user_id: result.insertId};
 }
 
-export {listAllUsers, findUserById, addUser};
+async function modifyUser(id, user) {
+  const sql =
+    'UPDATE wsk_users SET name = ?, username = ?, email = ?, role = ? WHERE user_id = ?';
+
+  const params = [
+    user.name,
+    user.username,
+    user.email,
+    user.role || 'user',
+    id,
+  ];
+
+  const [result] = await promisePool.execute(sql, params);
+
+  if (result.affectedRows === 0) {
+    return false;
+  }
+
+  return true;
+}
+
+// Delete user and all associated cats
+async function removeUser(id) {
+  const connection = await promisePool.getConnection();
+
+  // Start a transaction to ensure both deletions succeed or fail together
+  try {
+    await connection.beginTransaction();
+
+    // Delete all cats associated with the user
+    await connection.execute('DELETE FROM wsk_cats WHERE owner = ?', [id]);
+
+    // Delete the user
+    const [result] = await connection.execute(
+      'DELETE FROM wsk_users WHERE user_id = ?',
+      [id]
+    );
+
+    // Commit the transaction
+    await connection.commit();
+
+    if (result.affectedRows === 0) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
+}
+
+export {listAllUsers, findUserById, addUser, modifyUser, removeUser};

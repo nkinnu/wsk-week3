@@ -2,41 +2,31 @@
 GET http://localhost:3000/api/v1/cats
 
 ### Hae kissa ID:n perusteella
-GET http://localhost:3000/api/v1/cats/1
+GET http://localhost:3000/api/v1/cats/41
 
-### Lisää uusi kissa
-POST http://localhost:3000/api/v1/cats
-Content-Type: application/json
-
-{
-  "name": "Pörri",
-  "birthdate": "2020-01-01",
-  "weight": 4.5,
-  "owner": "Niko",
-  "image": "https://placecats.com/300/200"
-}
+### Hae kissa jota ei ole olemassa
+GET http://localhost:3000/api/v1/cats/9999
 
 ### Päivitä kissa
-PUT http://localhost:3000/api/v1/cats/1
+PUT http://localhost:3000/api/v1/cats/43
 Content-Type: application/json
 
 {
-  "name": "Pörri",
-  "birthdate": "2020-01-01",
-  "weight": 4.5,
-  "owner": "Niko",
-  "image": "https://placecats.com/300/200"
+  "cat_name": "Pörri",
+  "weight": 5.0,
+  "owner": 37,
+  "birthdate": "2020-01-01"
 }
 
 ### Poista kissa
-DELETE http://localhost:3000/api/v1/cats/1
+DELETE http://localhost:3000/api/v1/cats/43
 
 ### Lisää uusi kissa ja lataa kuva
 POST http://localhost:3000/api/v1/cats
 Content-Type: multipart/form-data; boundary=MyBoundary
 
 --MyBoundary
-Content-Disposition: form-data; name="name"
+Content-Disposition: form-data; name="cat_name"
 
 Pörri
 --MyBoundary
@@ -50,7 +40,7 @@ Content-Disposition: form-data; name="weight"
 --MyBoundary
 Content-Disposition: form-data; name="owner"
 
-Niko
+37
 --MyBoundary
 Content-Disposition: form-data; name="cat"; filename="PetImage.png"
 Content-Type: image/png
@@ -62,7 +52,7 @@ Content-Type: image/png
 GET http://localhost:3000/api/v1/users
 
 ### Hae käyttäjä ID:n perusteella
-GET http://localhost:3000/api/v1/users/3609
+GET http://localhost:3000/api/v1/users/37
 
 ### Lisää uusi käyttäjä
 POST http://localhost:3000/api/v1/users
@@ -76,15 +66,18 @@ Content-Type: application/json
 }
 
 ### Päivitä käyttäjä
-PUT http://localhost:3000/api/v1/users/1
+PUT http://localhost:3000/api/v1/users/38
 Content-Type: application/json
 
 {
   "name": "Matti Meikä",
   "username": "mattimeika",
-  "email": "matti@metropolia.fi",
+  "email": "matti.uusi@metropolia.fi",
   "password": "salasana"
 }
 
 ### Poista käyttäjä
-DELETE http://localhost:3000/api/v1/users/1
+DELETE http://localhost:3000/api/v1/users/38
+
+### Hae käyttäjän kissat
+GET http://localhost:3000/api/v1/users/37/cats

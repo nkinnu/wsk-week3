@@ -1,12 +1,18 @@
-import {listAllCats, findCatById, addCat} from '../models/cat-model.js';
+import {
+  listAllCats,
+  findCatById,
+  addCat,
+  modifyCat,
+  removeCat,
+} from '../models/cat-model.js';
 
-function getAllCats(req, res) {
-  res.json(listAllCats());
+async function getAllCats(req, res) {
+  const cats = await listAllCats();
+  res.json(cats);
 }
 
-function getCatById(req, res) {
-  const id = Number(req.params.id);
-  const cat = findCatById(id);
+async function getCatById(req, res) {
+  const cat = await findCatById(req.params.id);
 
   if (!cat) {
     return res.status(404).json({message: 'Kissaa ei löytynyt'});
@@ -15,7 +21,7 @@ function getCatById(req, res) {
   res.json(cat);
 }
 
-function postCat(req, res) {
+async function postCat(req, res) {
   console.log(req.body);
   console.log(req.file);
 
@@ -25,16 +31,39 @@ function postCat(req, res) {
 
   req.body.filename = req.file.filename;
 
-  const id = addCat(req.body);
-  res.status(201).json({cat_id: id});
+  const result = await addCat(req.body);
+
+  if (result) {
+    res.status(201).json({
+      message: 'Kissa lisätty',
+      result,
+    });
+  } else {
+    res.sendStatus(400);
+  }
 }
 
-function putCat(req, res) {
-  res.json({message: 'Cat item updated'});
+async function putCat(req, res) {
+  console.log('PUT id:', req.params.id);
+  console.log('PUT body:', req.body);
+
+  const result = await modifyCat(Number(req.params.id), req.body);
+
+  if (result) {
+    res.json({message: 'Kissan tiedot päivitetty'});
+  } else {
+    res.status(404).json({message: 'Kissaa ei löytynyt'});
+  }
 }
 
-function deleteCat(req, res) {
-  res.json({message: 'Cat item deleted'});
+async function deleteCat(req, res) {
+  const result = await removeCat(Number(req.params.id));
+
+  if (result) {
+    res.json({message: 'Kissa poistettu'});
+  } else {
+    res.status(404).json({message: 'Kissaa ei löytynyt'});
+  }
 }
 
 export {getAllCats, getCatById, postCat, putCat, deleteCat};
