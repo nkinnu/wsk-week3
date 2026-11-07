@@ -55,14 +55,14 @@ Niko
 Content-Disposition: form-data; name="cat"; filename="PetImage.png"
 Content-Type: image/png
 
-< ./public/PetImage.png
+< ../public/PetImage.png
 --MyBoundary--
 
 ### Hae kaikki käyttäjät
 GET http://localhost:3000/api/v1/users
 
 ### Hae käyttäjä ID:n perusteella
-GET http://localhost:3000/api/v1/users/1
+GET http://localhost:3000/api/v1/users/3609
 
 ### Lisää uusi käyttäjä
 POST http://localhost:3000/api/v1/users
