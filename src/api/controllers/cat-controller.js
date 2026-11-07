@@ -16,6 +16,15 @@ function getCatById(req, res) {
 }
 
 function postCat(req, res) {
+  console.log(req.body);
+  console.log(req.file);
+
+  if (!req.file) {
+    return res.status(400).json({message: 'Kuva puuttuu'});
+  }
+
+  req.body.filename = req.file.filename;
+
   const id = addCat(req.body);
   res.status(201).json({cat_id: id});
 }

@@ -35,16 +35,16 @@ function findCatById(id) {
 }
 
 function addCat(cat) {
-  const {name, birthdate, weight, owner, image} = cat;
+  const {name, birthdate, weight, owner, filename} = cat;
   const newId = cats[cats.length - 1].cat_id + 1;
 
   cats.push({
     cat_id: newId,
     name,
     birthdate,
-    weight,
+    weight: Number(weight),
     owner,
-    image,
+    filename,
   });
 
   return newId;

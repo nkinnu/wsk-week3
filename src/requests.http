@@ -31,6 +31,32 @@ Content-Type: application/json
 ### Poista kissa
 DELETE http://localhost:3000/api/v1/cats/1
 
+### Lisää uusi kissa ja lataa kuva
+POST http://localhost:3000/api/v1/cats
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="name"
+
+Pörri
+--MyBoundary
+Content-Disposition: form-data; name="birthdate"
+
+2020-01-01
+--MyBoundary
+Content-Disposition: form-data; name="weight"
+
+4.5
+--MyBoundary
+Content-Disposition: form-data; name="owner"
+
+Niko
+--MyBoundary
+Content-Disposition: form-data; name="cat"; filename="PetImage.png"
+Content-Type: image/png
+
+< ./public/PetImage.png
+--MyBoundary--
 
 ### Hae kaikki käyttäjät
 GET http://localhost:3000/api/v1/users
