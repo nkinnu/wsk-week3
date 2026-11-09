@@ -1,4 +1,5 @@
 import express from 'express';
+import {authenticateToken} from '../../middlewares/authentication.js';
 
 import {
   getAllUsers,
@@ -13,7 +14,11 @@ const userRouter = express.Router();
 
 userRouter.route('/').get(getAllUsers).post(postUser);
 
-userRouter.route('/:id').get(getUserById).delete(deleteUser).put(putUser);
+userRouter
+  .route('/:id')
+  .get(getUserById)
+  .put(authenticateToken, putUser)
+  .delete(authenticateToken, deleteUser);
 
 userRouter.get('/:id/cats', getUserCats);
 

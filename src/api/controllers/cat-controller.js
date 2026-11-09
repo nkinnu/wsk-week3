@@ -31,6 +31,8 @@ async function postCat(req, res) {
 
   req.body.filename = req.file.filename;
 
+  req.body.owner = res.locals.user.user_id;
+
   const result = await addCat(req.body);
 
   if (result) {
@@ -47,7 +49,11 @@ async function putCat(req, res) {
   console.log('PUT id:', req.params.id);
   console.log('PUT body:', req.body);
 
-  const result = await modifyCat(Number(req.params.id), req.body);
+  const result = await modifyCat(
+    Number(req.params.id),
+    req.body,
+    res.locals.user
+  );
 
   if (result) {
     res.json({message: 'Kissan tiedot päivitetty'});
@@ -57,7 +63,7 @@ async function putCat(req, res) {
 }
 
 async function deleteCat(req, res) {
-  const result = await removeCat(Number(req.params.id));
+  const result = await removeCat(Number(req.params.id, res.locals.user));
 
   if (result) {
     res.json({message: 'Kissa poistettu'});

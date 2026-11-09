@@ -48,11 +48,16 @@ async function addCat(cat) {
   return {cat_id: result.insertId};
 }
 
-async function modifyCat(id, cat) {
-  const sql =
-    'UPDATE wsk_cats SET cat_name = ?, weight = ?, owner = ?, birthdate = ? WHERE cat_id = ?';
+async function modifyCat(id, cat, user) {
+  let sql =
+    'UPDATE wsk_cats SET cat_name = ?, weight = ?, birthdate = ? WHERE cat_id = ?';
 
-  const params = [cat.cat_name, cat.weight, cat.owner, cat.birthdate, id];
+  const params = [cat.cat_name, cat.weight, cat.birthdate, id];
+
+  if (user.role !== 'admin') {
+    sql += ' AND owner = ?';
+    params.push(user.user_id);
+  }
 
   const [result] = await promisePool.execute(sql, params);
 
@@ -63,10 +68,17 @@ async function modifyCat(id, cat) {
   return true;
 }
 
-async function removeCat(id) {
-  const sql = 'DELETE FROM wsk_cats WHERE cat_id = ?';
+async function removeCat(id, user) {
+  let sql = 'DELETE FROM wsk_cats WHERE cat_id = ?';
 
-  const [result] = await promisePool.execute(sql, [id]);
+  const params = [id];
+
+  if (user.role !== 'admin') {
+    sql += ' AND owner = ?';
+    params.push(user.user_id);
+  }
+
+  const [result] = await promisePool.execute(sql, params);
 
   if (result.affectedRows === 0) {
     return false;
