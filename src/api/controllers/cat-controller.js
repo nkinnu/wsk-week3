@@ -63,7 +63,7 @@ async function putCat(req, res) {
 }
 
 async function deleteCat(req, res) {
-  const result = await removeCat(Number(req.params.id, res.locals.user));
+  const result = await removeCat(Number(req.params.id), res.locals.user);
 
   if (result) {
     res.json({message: 'Kissa poistettu'});
