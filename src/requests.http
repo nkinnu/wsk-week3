@@ -53,7 +53,7 @@ Content-Type: image/png
 GET http://localhost:3000/api/v1/users
 
 ### Hae käyttäjä ID:n perusteella
-GET http://localhost:3000/api/v1/users/37
+GET http://localhost:3000/api/v1/users/42
 
 ### Lisää uusi käyttäjä
 POST http://localhost:3000/api/v1/users
@@ -167,3 +167,109 @@ Content-Type: application/json
 ### Käyttäjä B yrittää poistaa käyttäjän A
 DELETE http://localhost:3000/api/v1/users/42
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MywibmFtZSI6IlRvaW5lbiBUZXN0aWvDpHl0dMOkasOkIiwidXNlcm5hbWUiOiJ0ZXN0aWtheXR0YWphQiIsImVtYWlsIjoidGVzdGliQGV4YW1wbGUuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3OTQyMTIyOTIsImV4cCI6MTc5NDI5ODY5Mn0.CRJ2baIrdaxE0zTQXBzBrPjzIwZ7JatTyMhy3qktn5s
+
+
+### Testataan olematonta reittiä
+GET http://localhost:3000/api/v1/olematonreitti
+
+### Olematon kissa
+GET http://localhost:3000/api/v1/cats/999999
+
+### Kissan lisääminen ilman tiedostoa
+POST http://localhost:3000/api/v1/cats
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0MiwibmFtZSI6IkJjcnlwdCBUZXN0aSIsInVzZXJuYW1lIjoidGVzdGkiLCJlbWFpbCI6InRlc3RpQGJjcnlwdC5maSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzk0MjEyMjY5LCJleHAiOjE3OTQyOTg2Njl9.5cbSp7SrZFxAwZhFTn18kW1hIarju498E2V1OAUw5jQ
+Content-Type: application/json
+
+{
+  "cat_name": "Testikissa",
+  "weight": 4,
+  "birthdate": "2020-01-01"
+}
+
+### Olematon käyttäjä
+GET http://localhost:3000/api/v1/users/999999
+
+### Virheellisen käyttäjän rekisteröinti
+POST http://localhost:3000/api/v1/users
+Content-Type: application/json
+
+{
+  "name": "",
+  "username": "ab",
+  "email": "vääräemail",
+  "password": "123"
+}
+
+### Assignment 7 - Luo testikäyttäjä
+POST http://localhost:3000/api/v1/users
+Content-Type: application/json
+
+{
+  "name": "Assignment 7 Testi",
+  "username": "testi7",
+  "email": "testi7@example.com",
+  "password": "salasana123"
+}
+
+### Assignment 7 - Kirjaudu sisään
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "testi7",
+  "password": "salasana123"
+}
+
+### Assignment 7 - Lisää kissa
+POST http://localhost:3000/api/v1/cats
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0NSwibmFtZSI6IkFzc2lnbm1lbnQgNyBUZXN0aSIsInVzZXJuYW1lIjoidGVzdGk3IiwiZW1haWwiOiJ0ZXN0aTdAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc5NDIyNDg2NSwiZXhwIjoxNzk0MzExMjY1fQ.ekOH4CZ9P9fg2fDJ-KnVPbsNw3zHvB1ob4V7cqbCKnc
+Content-Type: multipart/form-data; boundary=MyBoundary
+
+--MyBoundary
+Content-Disposition: form-data; name="cat_name"
+
+Testimisu
+--MyBoundary
+Content-Disposition: form-data; name="weight"
+
+4.5
+--MyBoundary
+Content-Disposition: form-data; name="birthdate"
+
+2020-01-01
+--MyBoundary
+Content-Disposition: form-data; name="cat"; filename="PetImage.png"
+Content-Type: image/png
+
+< ../public/PetImage.png
+--MyBoundary--
+
+### Assignment 7 - Virheellinen PUT
+PUT http://localhost:3000/api/v1/cats/45
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0NSwibmFtZSI6IkFzc2lnbm1lbnQgNyBUZXN0aSIsInVzZXJuYW1lIjoidGVzdGk3IiwiZW1haWwiOiJ0ZXN0aTdAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc5NDIyNDg2NSwiZXhwIjoxNzk0MzExMjY1fQ.ekOH4CZ9P9fg2fDJ-KnVPbsNw3zHvB1ob4V7cqbCKnc
+Content-Type: application/json
+
+{
+  "cat_name": "Mi",
+  "weight": "abc",
+  "birthdate": "vääräpäivämäärä"
+}
+
+### Assignment 7 - Kelvollinen PUT
+PUT http://localhost:3000/api/v1/cats/45
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0NSwibmFtZSI6IkFzc2lnbm1lbnQgNyBUZXN0aSIsInVzZXJuYW1lIjoidGVzdGk3IiwiZW1haWwiOiJ0ZXN0aTdAZXhhbXBsZS5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc5NDIyNDg2NSwiZXhwIjoxNzk0MzExMjY1fQ.ekOH4CZ9P9fg2fDJ-KnVPbsNw3zHvB1ob4V7cqbCKnc
+Content-Type: application/json
+
+{
+  "cat_name": "Testimisu",
+  "weight": 5,
+  "birthdate": "2021-06-15"
+}
+
+### Kirjautuminen ilman salasanaa
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "testi7"
+}

@@ -14,17 +14,19 @@ async function getAllUsers(req, res) {
   res.json(users);
 }
 
-async function getUserById(req, res) {
+async function getUserById(req, res, next) {
   const user = await findUserById(req.params.id);
 
   if (!user) {
-    return res.status(404).json({message: 'Käyttäjää ei löytynyt'});
+    const error = new Error('Käyttäjää ei löytynyt');
+    error.status = 404;
+    return next(error);
   }
 
   res.json(user);
 }
 
-async function postUser(req, res) {
+async function postUser(req, res, next) {
   req.body.password = await bcrypt.hash(req.body.password, 10);
 
   const result = await addUser(req.body);
@@ -35,22 +37,28 @@ async function postUser(req, res) {
       result,
     });
   } else {
-    res.sendStatus(400);
+    const error = new Error('Käyttäjän lisääminen epäonnistui');
+    error.status = 400;
+    return next(error);
   }
 }
 
-async function putUser(req, res) {
+async function putUser(req, res, next) {
   const id = Number(req.params.id);
   const user = res.locals.user;
 
   if (user.role !== 'admin' && user.user_id !== id) {
-    return res.sendStatus(403);
+    const error = new Error('Forbidden');
+    error.status = 403;
+    return next(error);
   }
 
   const targetUser = await findUserById(id);
 
   if (!targetUser) {
-    return res.sendStatus(404);
+    const error = new Error('Käyttäjää ei löytynyt');
+    error.status = 404;
+    return next(error);
   }
 
   const updatedData = {
@@ -65,7 +73,9 @@ async function putUser(req, res) {
   }
 
   if (!['user', 'admin'].includes(updatedData.role)) {
-    return res.sendStatus(400);
+    const error = new Error('Virheellinen rooli');
+    error.status = 400;
+    return next(error);
   }
 
   const result = await modifyUser(id, updatedData);
@@ -73,16 +83,20 @@ async function putUser(req, res) {
   if (result) {
     res.json({message: 'Käyttäjän tiedot päivitetty'});
   } else {
-    res.status(404).json({message: 'Käyttäjää ei löytynyt'});
+    const error = new Error('Käyttäjää ei löytynyt');
+    error.status = 404;
+    return next(error);
   }
 }
 
-async function deleteUser(req, res) {
+async function deleteUser(req, res, next) {
   const id = Number(req.params.id);
   const user = res.locals.user;
 
   if (user.role !== 'admin' && user.user_id !== id) {
-    return res.sendStatus(403);
+    const error = new Error('Forbidden');
+    error.status = 403;
+    return next(error);
   }
 
   const result = await removeUser(id);
@@ -90,7 +104,9 @@ async function deleteUser(req, res) {
   if (result) {
     res.json({message: 'Käyttäjä poistettu'});
   } else {
-    res.status(404).json({message: 'Käyttäjää ei löytynyt'});
+    const error = new Error('Käyttäjää ei löytynyt');
+    error.status = 404;
+    return next(error);
   }
 }
 

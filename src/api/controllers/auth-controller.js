@@ -3,23 +3,29 @@ import bcrypt from 'bcrypt';
 import {findByUsername} from '../models/user-model.js';
 import 'dotenv/config';
 
-async function postLogin(req, res) {
+async function postLogin(req, res, next) {
   const {username, password} = req.body;
 
   if (typeof username !== 'string' || typeof password !== 'string') {
-    return res.sendStatus(400);
+    const error = new Error('Invalid username or passowrd');
+    error.status = 400;
+    return next(error);
   }
 
   const user = await findByUsername(username);
 
   if (!user) {
-    return res.sendStatus(401);
+    const error = new Error('Invalid username or password');
+    error.status = 401;
+    return next(error);
   }
 
   const passwordMatch = await bcrypt.compare(password, user.password);
 
   if (!passwordMatch) {
-    return res.sendStatus(401);
+    const error = new Error('Invalid username or password');
+    error.status = 401;
+    return next(error);
   }
 
   const userWithoutPassword = {

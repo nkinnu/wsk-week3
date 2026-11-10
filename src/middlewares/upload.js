@@ -1,12 +1,29 @@
 import sharp from 'sharp';
+import multer from 'multer';
 
-const createThumbnail = async (req, res, next) => {
-  if (!req.file) {
-    next();
-    return;
+const upload = multer({
+  dest: 'uploads/',
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype.startsWith('image/') ||
+      file.mimetype.startsWith('video/')
+    ) {
+      cb(null, true);
+    } else {
+      const error = new Error('Only images and videos are allowed!');
+      error.status = 400;
+      cb(error, false);
+    }
+  },
+});
+
+async function createThumbnail(req, res, next) {
+  if (!req.file || !req.file.mimetype.startsWith('image/')) {
+    return next();
   }
-
-  console.log(req.file.path);
 
   try {
     await sharp(req.file.path)
@@ -18,6 +35,6 @@ const createThumbnail = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-export {createThumbnail};
+export {upload, createThumbnail};
