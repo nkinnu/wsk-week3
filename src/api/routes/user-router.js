@@ -18,6 +18,7 @@ userRouter
   .route('/')
   .get(getAllUsers)
   .post(
+    body('name').trim().notEmpty(),
     body('email').trim().isEmail(),
     body('username').trim().isLength({min: 3, max: 20}).isAlphanumeric(),
     body('password').trim().isLength({min: 8}),
